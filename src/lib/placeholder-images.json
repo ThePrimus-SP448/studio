@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "logo-apple",
+      "description": "Apple Inc. logo",
+      "imageUrl": "https://images.unsplash.com/photo-1540726811314-7648cc1b4426?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhcHBsZSUyMGxvZ298ZW58MHx8fHwxNzY1ODczMjU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apple logo"
+    },
+    {
+      "id": "logo-google",
+      "description": "Alphabet Inc. (Google) logo",
+      "imageUrl": "https://images.unsplash.com/photo-1529612700005-e35377bf1415?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxnb29nbGUlMjBsb2dvfGVufDB8fHx8MTc2NTkwMTE4MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "google logo"
+    },
+    {
+      "id": "logo-microsoft",
+      "description": "Microsoft Corp. logo",
+      "imageUrl": "https://images.unsplash.com/photo-1662947036583-d67dd8055edf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtaWNyb3NvZnQlMjBsb2dvfGVufDB8fHx8MTc2NTg3MzI1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "microsoft logo"
+    },
+    {
+      "id": "logo-amazon",
+      "description": "Amazon.com Inc. logo",
+      "imageUrl": "https://images.unsplash.com/photo-1602359337719-a8bcbd1f7b51?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhbWF6b24lMjBsb2dvfGVufDB8fHx8MTc2NTk0MjgxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "amazon logo"
+    },
+    {
+      "id": "logo-tesla",
+      "description": "Tesla Inc. logo",
+      "imageUrl": "https://images.unsplash.com/photo-1662947475743-35a389428742?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0ZXNsYSUyMGxvZ298ZW58MHx8fHwxNzY1ODczMjU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tesla logo"
+    },
+    {
+      "id": "logo-meta",
+      "description": "Meta Platforms Inc. logo",
+      "imageUrl": "https://images.unsplash.com/photo-1667586091163-e759ac830a1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtZXRhJTIwbG9nb3xlbnwwfHx8fDE3NjU5NTAyNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "meta logo"
+    },
+    {
+      "id": "user-avatar",
+      "description": "User avatar placeholder",
+      "imageUrl": "https://images.unsplash.com/photo-1548544149-4835e62ee5b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwZXJzb24lMjBmYWNlfGVufDB8fHx8MTc2NTk0MzY4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person face"
+    }
+  ]
 }
