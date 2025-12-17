@@ -1,0 +1,169 @@
+rules_version = '2';
+
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model where all
+ * user-generated content (profiles, portfolios, transactions, and recommendations)
+ * is private and accessible only to the user who created it. Public data, such as
+ * stock information, is segregated into its own collection and is publicly readable.
+ *
+ * Data Structure: User-specific data is organized hierarchically under the
+ * `/users/{userId}` path. This path-based ownership is the primary mechanism for
+ * security. A top-level `/stocks` collection holds publicly accessible market data.
+ *
+ * Key Security Decisions:
+ * - User data is private: A user can only access documents within their own
+ *   `/users/{userId}` tree.
+ * - User listing is disallowed: For privacy and security, clients cannot query the
+ *   top-level `/users` collection.
+ * - Public data is read-only for clients: The `/stocks` collection can be read by
+ *   anyone, but cannot be written to by any client. This assumes a trusted backend
+ *   service is responsible for populating and updating stock data.
+ * - Default posture is deny-all: Access is only granted by explicit `allow` rules.
+ *
+ * Denormalization for Authorization: Security is primarily achieved through
+ * path-based ownership (the user's ID is in the document path), which is a
+ * highly performant and secure pattern that avoids extra database reads (`get()` calls)
+ * in rules. For documents within a user's collection, we enforce relational
+ * integrity by requiring a `userId` field in the document data to match the `userId`
+ * in the path upon creation.
+ *
+ * Structural Segregation: The ruleset clearly separates private user data
+ * (e.g., `/users/{userId}/portfolios`) from public data (`/stocks`). This prevents
+ * accidental data leakage and makes list queries simpler and more secure, as all
+ * documents within a given collection have a uniform security context.
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions to improve readability and maintainability.
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the authenticated user's UID matches the userId in the path.
+     * This is the core of the ownership model.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * A stricter ownership check for state-changing operations (update, delete).
+     * Verifies ownership AND ensures the document already exists.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * On CREATE: Validates that the user's root document (`/users/{userId}`)
+     * contains an `id` field that matches the document's ID in the path.
+     */
+    function hasMatchingUserIdOnCreate(userId) {
+      return request.resource.data.id == userId;
+    }
+
+    /**
+     * On UPDATE: Ensures the `id` field of a user's root document is immutable.
+     */
+    function isUserIdFieldImmutable() {
+      return request.resource.data.id == resource.data.id;
+    }
+    
+    /**
+     * On CREATE: Validates that a subcollection document (e.g., a Transaction)
+     * contains a `userId` field that matches the owner's ID from the path.
+     */
+    function hasMatchingOwnerIdOnCreate(userId) {
+      return request.resource.data.userId == userId;
+    }
+    
+    /**
+     * On UPDATE: Ensures the `userId` field within a subcollection document
+     * is immutable, preventing it from being reassigned to another user.
+     */
+    function isOwnerIdImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    /**
+     * @description Rules for a user's own profile document.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user creating their own user document for the first time. auth.uid must match {userId}.
+     * @deny (list) Any user attempting to list all documents in the `/users` collection.
+     * @principle Enforces self-creation and ownership. Prevents enumeration of all application users.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && hasMatchingUserIdOnCreate(userId);
+      allow update: if isExistingOwner(userId) && isUserIdFieldImmutable();
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Rules for a user's private transaction records.
+       * @path /users/{userId}/transactions/{transactionId}
+       * @allow (create) An authenticated user creating a transaction record for themselves.
+       * @deny (get) User 'A' attempting to read a transaction belonging to User 'B'.
+       * @principle Restricts access to a user's own data tree using path-based ownership.
+       */
+      match /transactions/{transactionId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasMatchingOwnerIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Rules for a user's private portfolio records.
+       * @path /users/{userId}/portfolios/{portfolioId}
+       * @allow (list) An authenticated user listing all portfolio documents they own.
+       * @deny (update) User 'A' attempting to modify a portfolio document belonging to User 'B'.
+       * @principle Restricts access to a user's own data tree using path-based ownership.
+       */
+      match /portfolios/{portfolioId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasMatchingOwnerIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Rules for a user's private investment recommendations.
+       * @path /users/{userId}/recommendations/{recommendationId}
+       * @allow (delete) An authenticated user deleting one of their own recommendations.
+       * @deny (create) An unauthenticated user attempting to create a recommendation.
+       * @principle Restricts access to a user's own data tree using path-based ownership.
+       */
+      match /recommendations/{recommendationId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasMatchingOwnerIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+    /**
+     * @description Rules for the public collection of stock information.
+     * @path /stocks/{stockId}
+     * @allow (get, list) Any user, including unauthenticated ones, reading stock data.
+     * @deny (create, update, delete) Any client attempting to write to the stocks collection.
+     * @principle Secures public data as read-only for all clients, assuming a trusted backend service manages writes.
+     */
+    match /stocks/{stockId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
