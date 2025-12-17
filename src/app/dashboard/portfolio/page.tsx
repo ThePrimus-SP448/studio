@@ -11,11 +11,6 @@ export default function PortfolioPage() {
         <PortfolioSummary />
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
             <PortfolioChart />
-            <div className="lg:col-start-1 lg:row-start-2">
-                 <HoldingsTable />
-            </div>
-        </div>
-         <div className="hidden lg:block lg:col-start-2 lg:row-start-1 lg:row-span-2">
             <HoldingsTable />
         </div>
       </main>

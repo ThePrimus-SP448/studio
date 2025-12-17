@@ -10,17 +10,15 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-background">
-        <Sidebar className="border-r">
-          <SidebarHeader>
-            <Logo />
-          </SidebarHeader>
-          <SidebarNav />
-        </Sidebar>
-        <SidebarInset>
-          {children}
-        </SidebarInset>
-      </div>
+      <Sidebar>
+        <SidebarHeader>
+          <Logo />
+        </SidebarHeader>
+        <SidebarNav />
+      </Sidebar>
+      <SidebarInset>
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }

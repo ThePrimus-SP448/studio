@@ -2,14 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BrainCircuit, Briefcase, LayoutDashboard } from 'lucide-react';
+import { Briefcase, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const links = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/portfolio', label: 'Portfolio', icon: Briefcase },
-  { href: '/dashboard/advisor', label: 'AI Advisor', icon: BrainCircuit },
 ];
 
 export function SidebarNav() {
