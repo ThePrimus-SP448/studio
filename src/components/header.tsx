@@ -1,4 +1,3 @@
-'use client';
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { UserNav } from "@/components/user-nav"

@@ -1,3 +1,6 @@
+
+'use client';
+
 import {
   Avatar,
   AvatarFallback,
@@ -15,8 +18,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { user } from "@/lib/data"
 import Link from "next/link"
+import { useEffect, useState } from "react";
 
 export function UserNav() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+        <div className="h-9 w-9 rounded-full bg-muted" />
+    );
+  }
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
