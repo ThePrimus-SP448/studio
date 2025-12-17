@@ -24,6 +24,7 @@ export type Portfolio = {
   totalInvestment: number;
   totalPandL: number;
   totalPandLPercent: number;
+  cash: number;
   holdings: Holding[];
   history: { date: string; value: number }[];
 };

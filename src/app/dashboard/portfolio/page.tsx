@@ -9,9 +9,13 @@ export default function PortfolioPage() {
       <Header title="My Portfolio" />
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <PortfolioSummary />
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
-            <PortfolioChart />
-            <HoldingsTable />
+        <div className="grid gap-4 md:gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+                <PortfolioChart />
+            </div>
+            <div className="lg:col-span-1">
+                <HoldingsTable />
+            </div>
         </div>
       </main>
     </div>

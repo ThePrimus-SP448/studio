@@ -17,9 +17,11 @@ import { portfolio } from '@/lib/data';
 import { Holding } from '@/lib/types';
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 };
 
@@ -27,7 +29,7 @@ const HoldingRow = ({ holding }: { holding: Holding }) => {
   const invested = holding.quantity * holding.avgPrice;
   const currentValue = holding.quantity * holding.currentPrice;
   const pAndL = currentValue - invested;
-  const pAndLPercent = (pAndL / invested) * 100;
+  const pAndLPercent = invested > 0 ? (pAndL / invested) * 100 : 0;
   const isProfit = pAndL >= 0;
 
   return (

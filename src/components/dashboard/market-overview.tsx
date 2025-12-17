@@ -56,7 +56,7 @@ export function MarketOverview() {
               axisLine={false}
               />
             <YAxis 
-                domain={['dataMin - 100', 'dataMax + 100']} 
+                domain={['dataMin - 1000', 'dataMax + 1000']} 
                 hide 
             />
             <ChartTooltip

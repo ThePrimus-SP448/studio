@@ -17,6 +17,15 @@ import Image from 'next/image';
 import { Area, AreaChart } from 'recharts';
 import { Button } from '@/components/ui/button';
 
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value);
+};
+
 const StockCard = ({ stock }: { stock: Stock }) => {
   const isUp = stock.changePercent >= 0;
   return (
@@ -69,7 +78,7 @@ const StockCard = ({ stock }: { stock: Stock }) => {
       </CardHeader>
       <CardContent className="flex items-end justify-between">
         <div>
-          <p className="text-2xl font-bold">${stock.price.toFixed(2)}</p>
+          <p className="text-2xl font-bold">{formatCurrency(stock.price)}</p>
           <div className={`flex items-center text-sm font-medium ${isUp ? 'text-green-500' : 'text-red-500'}`}>
             {isUp ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
             {stock.changePercent.toFixed(2)}%

@@ -15,6 +15,24 @@ import {
 import { portfolio } from '@/lib/data';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        notation: 'compact',
+        compactDisplay: 'short'
+    }).format(value);
+};
+
+const formatTooltipCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value);
+};
+
 export function PortfolioChart() {
   const chartData = portfolio.history;
 
@@ -46,14 +64,14 @@ export function PortfolioChart() {
               axisLine={false}
             />
             <YAxis 
-                tickFormatter={(value) => `$${(value / 1000)}k`}
-                domain={['dataMin - 1000', 'dataMax + 1000']} 
+                tickFormatter={(value) => formatCurrency(value)}
+                domain={['dataMin - 10000', 'dataMax + 10000']} 
                 tickLine={false}
                 axisLine={false}
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="dot" formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)}/>}
+              content={<ChartTooltipContent indicator="dot" formatter={(value) => formatTooltipCurrency(value as number)}/>}
             />
             <defs>
               <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
