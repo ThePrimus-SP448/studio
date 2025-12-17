@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Portfolio, Holding } from '@/lib/types';
-import { portfolio as initialPortfolio, stocks as allStocks } from '@/lib/data';
+import { initialPortfolio, stocks as allStocks } from '@/lib/data';
 
 interface PortfolioContextType {
   portfolio: Portfolio;
