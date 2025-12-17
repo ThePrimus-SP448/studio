@@ -1,4 +1,4 @@
 'use server';
 
-// This file is intentionally left blank after removing the AI advisor feature.
+// This file is intentionally left blank.
 // You can add new server actions here in the future.

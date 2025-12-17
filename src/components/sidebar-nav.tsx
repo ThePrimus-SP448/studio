@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Briefcase, LayoutDashboard } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
