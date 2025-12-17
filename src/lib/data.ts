@@ -1,6 +1,7 @@
 import type { User, Stock, Portfolio, Holding } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
+// This is now just placeholder data for non-logged in states or initial structure
 export const user: User = {
   name: 'Alex Doe',
   email: 'alex.doe@example.com',
@@ -34,46 +35,16 @@ export const stocks: Stock[] = stocksData.map(stock => ({
   history: generateStockHistory(stock.price),
 }));
 
-const holdingsData: Omit<Holding, 'currentPrice'>[] = [
-  { ticker: 'RELIANCE', name: 'Reliance Industries', logoUrl: PlaceHolderImages.find(p => p.id === 'logo-reliance')?.imageUrl || '', quantity: 10, avgPrice: 2800.00 },
-  { ticker: 'TCS', name: 'Tata Consultancy', logoUrl: PlaceHolderImages.find(p => p.id === 'logo-tcs')?.imageUrl || '', quantity: 5, avgPrice: 3900.50 },
-  { ticker: 'HDFCBANK', name: 'HDFC Bank', logoUrl: PlaceHolderImages.find(p => p.id === 'logo-hdfc')?.imageUrl || '', quantity: 20, avgPrice: 1650.25 },
-];
-
-const holdings: Holding[] = holdingsData.map(h => ({
-  ...h,
-  currentPrice: stocks.find(s => s.ticker === h.ticker)?.price || h.avgPrice,
-}));
-
-const totalInvestment = holdings.reduce((acc, h) => acc + (h.quantity * h.avgPrice), 0);
-const totalValue = holdings.reduce((acc, h) => acc + (h.quantity * h.currentPrice), 0);
-const totalPandL = totalValue - totalInvestment;
-const totalPandLPercent = totalInvestment > 0 ? (totalPandL / totalInvestment) * 100 : 0;
-const cashBalance = 100000;
-
-const generatePortfolioHistory = () => {
-    const history: { date: string, value: number }[] = [];
-    let value = totalInvestment;
-    for (let i = 30; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        value += (Math.random() - 0.48) * (totalInvestment * 0.01); // Simulate daily portfolio value change
-        value = Math.max(value, totalInvestment * 0.8);
-        history.push({ date: date.toISOString().split('T')[0], value: parseFloat(value.toFixed(2)) });
-    }
-    history[history.length -1].value = totalValue; // Ensure last value is current value
-    return history;
-}
-
-export const portfolio: Portfolio = {
-  totalValue,
-  totalInvestment,
-  totalPandL,
-  totalPandLPercent,
-  cash: cashBalance,
-  holdings,
-  history: generatePortfolioHistory(),
+export const initialPortfolio: Portfolio = {
+  totalValue: 0,
+  totalInvestment: 0,
+  totalPandL: 0,
+  totalPandLPercent: 0,
+  cash: 100000,
+  holdings: [],
+  history: [],
 };
+
 
 export const marketSummary = {
   market: 'NIFTY 50',
