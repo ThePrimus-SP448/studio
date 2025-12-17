@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import {
   Table,
@@ -13,8 +15,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { portfolio } from '@/lib/data';
-import { Holding } from '@/lib/types';
+import type { Holding, Stock } from '@/lib/types';
+import { usePortfolio } from '@/context/portfolio-context';
+import { TradeDialog } from '../trade-dialog';
+import { stocks } from '@/lib/data';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("en-IN", {
@@ -26,11 +30,24 @@ const formatCurrency = (value: number) => {
 };
 
 const HoldingRow = ({ holding }: { holding: Holding }) => {
+  const stock = stocks.find(s => s.ticker === holding.ticker);
+  const currentPrice = stock ? stock.price : holding.avgPrice;
+
   const invested = holding.quantity * holding.avgPrice;
-  const currentValue = holding.quantity * holding.currentPrice;
+  const currentValue = holding.quantity * currentPrice;
   const pAndL = currentValue - invested;
   const pAndLPercent = invested > 0 ? (pAndL / invested) * 100 : 0;
   const isProfit = pAndL >= 0;
+
+  const stockForDialog: Stock = {
+    ...holding,
+    price: currentPrice,
+    history: stock?.history || [],
+    change: stock?.change || 0,
+    changePercent: stock?.changePercent || 0,
+    marketCap: stock?.marketCap || "",
+    volume: stock?.volume || ""
+  };
 
   return (
     <TableRow>
@@ -52,42 +69,57 @@ const HoldingRow = ({ holding }: { holding: Holding }) => {
       </TableCell>
       <TableCell className="text-right">{holding.quantity}</TableCell>
       <TableCell className="text-right">{formatCurrency(holding.avgPrice)}</TableCell>
-      <TableCell className="text-right">{formatCurrency(holding.currentPrice)}</TableCell>
+      <TableCell className="text-right">{formatCurrency(currentPrice)}</TableCell>
       <TableCell className="text-right">{formatCurrency(invested)}</TableCell>
       <TableCell className="text-right">{formatCurrency(currentValue)}</TableCell>
       <TableCell className={`text-right font-medium ${isProfit ? 'text-green-500' : 'text-red-500'}`}>
         <div>{formatCurrency(pAndL)}</div>
         <div className="text-xs">({pAndLPercent.toFixed(2)}%)</div>
       </TableCell>
+       <TableCell className="text-right">
+        <div className="flex gap-2 justify-end">
+            <TradeDialog stock={stockForDialog} action="sell" />
+            <TradeDialog stock={stockForDialog} action="buy" />
+        </div>
+      </TableCell>
     </TableRow>
   );
 };
 
 export function HoldingsTable() {
+  const { portfolio } = usePortfolio();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Your Holdings</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Stock</TableHead>
-              <TableHead className="text-right">Quantity</TableHead>
-              <TableHead className="text-right">Avg. Price</TableHead>
-              <TableHead className="text-right">Current Price</TableHead>
-              <TableHead className="text-right">Invested</TableHead>
-              <TableHead className="text-right">Current Value</TableHead>
-              <TableHead className="text-right">P/L</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {portfolio.holdings.map((holding) => (
-              <HoldingRow key={holding.ticker} holding={holding} />
-            ))}
-          </TableBody>
-        </Table>
+        {portfolio.holdings.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Stock</TableHead>
+                <TableHead className="text-right">Quantity</TableHead>
+                <TableHead className="text-right">Avg. Price</TableHead>
+                <TableHead className="text-right">Current Price</TableHead>
+                <TableHead className="text-right">Invested</TableHead>
+                <TableHead className="text-right">Current Value</TableHead>
+                <TableHead className="text-right">P/L</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {portfolio.holdings.map((holding) => (
+                <HoldingRow key={holding.ticker} holding={holding} />
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            You don't have any holdings yet.
+          </div>
+        )}
       </CardContent>
     </Card>
   );

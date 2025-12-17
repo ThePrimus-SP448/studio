@@ -12,7 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { portfolio } from '@/lib/data';
+import { usePortfolio } from '@/context/portfolio-context';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const formatCurrency = (value: number) => {
@@ -34,6 +34,7 @@ const formatTooltipCurrency = (value: number) => {
 };
 
 export function PortfolioChart() {
+  const { portfolio } = usePortfolio();
   const chartData = portfolio.history;
 
   return (

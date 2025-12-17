@@ -11,11 +11,12 @@ import {
   ChartContainer
 } from '@/components/ui/chart';
 import { stocks } from '@/lib/data';
-import { Stock } from '@/lib/types';
+import type { Stock } from '@/lib/types';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import Image from 'next/image';
 import { Area, AreaChart } from 'recharts';
-import { Button } from '@/components/ui/button';
+import { usePortfolio } from '@/context/portfolio-context';
+import { TradeDialog } from '@/components/trade-dialog';
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-IN", {
@@ -28,6 +29,7 @@ const formatCurrency = (value: number) => {
 
 const StockCard = ({ stock }: { stock: Stock }) => {
   const isUp = stock.changePercent >= 0;
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -85,8 +87,8 @@ const StockCard = ({ stock }: { stock: Stock }) => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">Sell</Button>
-          <Button size="sm">Buy</Button>
+          <TradeDialog stock={stock} action="sell" />
+          <TradeDialog stock={stock} action="buy" />
         </div>
       </CardContent>
     </Card>

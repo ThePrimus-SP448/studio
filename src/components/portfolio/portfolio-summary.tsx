@@ -1,10 +1,12 @@
+'use client';
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { portfolio } from "@/lib/data";
+import { usePortfolio } from "@/context/portfolio-context";
 import { ArrowDown, ArrowUp, Banknote, PiggyBank, Scale } from "lucide-react";
 
 const formatCurrency = (value: number) => {
@@ -17,6 +19,7 @@ const formatCurrency = (value: number) => {
 };
 
 export function PortfolioSummary() {
+  const { portfolio } = usePortfolio();
   const isProfit = portfolio.totalPandL >= 0;
 
   return (
